@@ -1,0 +1,31 @@
+identification_task:
+  description: >
+    Extract from the appendix below the titles/subtitles
+    which will contain the commands/methods for the protocol of the documents appendix.
+    Extract only the titles/suntitles that are relevant to the commands/methods. 
+    there can be multiple titles.
+    Dont extract/select any addition data , parent titles , attribute titles.
+    Extraction should only contain relevant data and exclude anything irrelevant 
+    Extraction should not miss any important title.
+    This is the appendix: {appendix}
+  expected_output: >
+    A single numbered list containing the the titles/subtitles.
+    then under it a single list of the serializtion of each topic between square brackets
+    
+    example: [1.4.2 , 2.4 , ...]
+  agent: Extractor
+
+# List_Extraction:
+#   description: >
+#     |
+#     This is a list that should contain all the command of the protocol each command written in capital letters.
+#     List: []
+#     using the the context provides below add/update command to the command list.
+#     Sometimes the context doesnt have any data relating to the command if that happens dont update the list.
+#     |
+#     Context: 
+
+#   expected_output: >
+#     the text that was between the | symbol with the updated list in its location []
+
+#   agent: Extractor

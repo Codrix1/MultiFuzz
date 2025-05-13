@@ -1,0 +1,1105 @@
+------------------
+
+**Chapter 1: Command Purpose & Outlines**
+
+The USER command is used to identify the user to the server in the FTP protocol. It is typically the first command sent after establishing the control connection and can be used at any time to change access control information, which resets the authentication process. The USER command is part of the login process and is followed by the PASS command to complete the authentication. Executing the USER command does not influence the system state, and it can be used anytime during the FTP session to reset user authentication.
+
+---
+
+
+**Chapter 2: Valid Direct Preceding Commands/Methods**
+
+- **Exact Preceding Command:** ftp (host)  
+  - **State Required:** The system must be in the initial state after the control connection is established.  
+  - **System State Change:** No change occurs; the USER command is typically the first command sent after establishing the connection.  
+
+---
+
+
+**Chapter 3: Valid Direct Subsequent Commands/Methods**
+
+- **Exact Subsequent Command:** PASS  
+  - **State Required:** The system must be in a state where user authentication is expected.  
+  - **System State Change:** Yes, the PASS command completes the user login process.  
+  - **New State:** The system transitions to an authenticated user session.  
+
+- **Exact Subsequent Command:** RETR  
+  - **State Required:** The system must be in an authenticated state.  
+  - **System State Change:** Yes, the RETR command initiates a file retrieval.  
+  - **New State:** The system opens a data connection for file transfer.  
+
+- **Exact Subsequent Command:** TYPE  
+  - **State Required:** The system must be in an authenticated state.  
+  - **System State Change:** Yes, the TYPE command sets the data transfer type.  
+  - **New State:** The system is ready for data transfer in the specified type.  
+
+- **Exact Subsequent Command:** STOR  
+  - **State Required:** The system must be in an authenticated state.  
+  - **System State Change:** Yes, the STOR command initiates a file upload.  
+  - **New State:** The system opens a data connection for file transfer.  
+
+- **Exact Subsequent Command:** QUIT  
+  - **State Required:** The system must be in an authenticated state.  
+  - **System State Change:** Yes, the QUIT command terminates the session.  
+  - **New State:** The system closes all connections.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+**Chapter 1: Command Purpose & Outlines**
+The PASS command is used to send the password, completing the user's identification process. Executing PASS transitions the system to a state where account information may be required. It cannot be used at any time; it must immediately follow the USER command.
+
+
+
+**Chapter 2: Valid Direct Preceding Commands/Methods**
+- **Preceding Command:** USER
+  - **System State:** The system must have received the USER command.
+  - **Changes System State:** Yes, transitions to a state where account information may be required.
+
+
+
+**Chapter 3: Valid Direct Subsequent Commands/Methods**
+- **Subsequent Command:** RETR
+  - **System State:** The system must be in a state where the user is logged in.
+  - **Changes System State:** Yes, retrieves a file.
+- **Subsequent Command:** TYPE
+  - **System State:** The system must be in a state where the user is logged in.
+  - **Changes System State:** Yes, sets the file transfer type.
+
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+The ACCT command is used to specify the account identifier for the user, which may be required for login or specific access. Executing ACCT does not influence the system state, and it can be used at any time during the session.
+
+
+1. **USER**   - **State Required:** The system must be in the initial state after the control connection is established.   - **System State Change:** No change occurs upon executing ACCT after USER. 2. **PASS**   - **State Required:** The system must be in a state where user authentication is being processed.   - **System State Change:** No change occurs upon executing ACCT after PASS.
+
+
+No specific commands are identified in the context that must directly follow ACCT. Therefore, this chapter remains unchanged as no subsequent commands are explicitly required after ACCT.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+### Chapter 1: Command Purpose & Outlines
+
+The CWD (Change Working Directory) command allows the user to switch to a different directory or dataset for file operations without altering login or accounting information. Executing CWD does not change the system state beyond updating the working directory, and it can be used at any time during the session.
+
+
+
+### Chapter 2: Valid Direct Preceding Commands/Methods
+
+- **USER**: The system must be in the initial state after a control connection is established. Executing CWD after USER changes the working directory to the specified path.
+- **PASS**: The system must have a valid username provided. CWD changes the working directory after successful authentication.
+- **REIN**: The system resets to default settings after REIN. CWD sets a new working directory.
+- **MKD**: The system must have just created a new directory. Executing CWD after MKD changes the working directory to the newly created directory.
+
+
+
+### Chapter 3: Valid Direct Subsequent Commands/Methods
+
+- **RETR, STOR, LIST, etc.**: The system must have a valid working directory. These commands execute using the new directory without changing the state.
+- **SMNT**: The system must have a valid working directory. SMNT mounts a different file system.
+- **REIN**: The system must be in a state to reset. REIN resets the connection, closing it if no transfer is ongoing.
+- **QUIT**: The system must be ready to terminate. QUIT logs out and closes the connection if no transfer is active. 
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+### Chapter 1: Command Purpose & Outlines
+
+The CDUP command is used to change the current working directory to its parent directory. It is a special case of the CWD command, designed to simplify directory navigation across different operating systems. Executing CDUP influences the system state by changing the current working directory to the parent directory. It can be used anytime when the user is logged in and has permission to navigate directories.
+
+
+### Chapter 2: Valid Direct Preceding Commands/Methods
+
+- **CWD**: The system must be in a state where the user has changed the working directory. Executing CDUP after CWD changes the system state to the parent directory of the current working directory.
+- **MKD**: The system must be in a state where a directory has been created. Executing CDUP after MKD changes the system state to the parent directory of the newly created directory.
+- **RMD**: The system must be in a state where a directory has been removed. Executing CDUP after RMD changes the system state to the parent directory of the current working directory.
+
+
+### Chapter 3: Valid Direct Subsequent Commands/Methods
+
+- **CWD**: The system must be in a state where the user has changed the directory to the parent directory. Executing CWD after CDUP changes the system state to the specified directory.
+- **PWD**: The system must be in a state where the user has changed the directory to the parent directory. Executing PWD after CDUP does not change the system state but returns the current working directory.
+- **MKD**: The system must be in a state where the user has changed the directory to the parent directory. Executing MKD after CDUP changes the system state to the newly created directory.
+- **RMD**: The system must be in a state where the user has changed the directory to the parent directory. Executing RMD after CDUP changes the system state by removing the specified directory.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+The SMNT command, or Structure Mount, is used to mount a different file system data structure without altering login or accounting information. Executing SMNT does not change the system state, and it can be used anytime.
+
+
+- Preceding Command: USER
+  - System State: The system must be in a logged-in state.
+  - SMNT Execution: Does not change the system state.
+  - New State: Remains in the logged-in state.
+
+- Preceding Command: PASS
+  - System State: The system must be in a logged-in state.
+  - SMNT Execution: Does not change the system state.
+  - New State: Remains in the logged-in state.
+
+- Preceding Command: ACCT
+  - System State: The system must be in a logged-in state with account information provided.
+  - SMNT Execution: Does not change the system state.
+  - New State: Remains in the logged-in state with account information.
+
+- Preceding Command: CWD
+  - System State: The system must be in a specific directory.
+  - SMNT Execution: Does not change the system state.
+  - New State: Remains in the specific directory.
+
+- Preceding Command: CDUP
+  - System State: The system must be in the parent directory.
+  - SMNT Execution: Does not change the system state.
+  - New State: Remains in the parent directory.
+
+
+No valid direct subsequent commands/methods are specified in the context.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+chapter 1:
+**Chapter 1: Command Purpose & Outlines**
+
+The QUIT command is used to terminate the user session, logging out the user. Executing QUIT changes the system state by closing the control connection, and it can be executed at any time during the session.
+
+---
+
+
+chapter 2:
+**Chapter 2: Valid Direct Preceding Commands/Methods**
+
+There are no specific commands that must directly precede the QUIT command. QUIT can be issued without any required preceding commands.
+
+---
+
+
+chapter 3:
+**Chapter 3: Valid Direct Subsequent Commands/Methods**
+
+There are no valid commands that can directly follow the QUIT command. Once QUIT is executed, the control connection is typically closed, making subsequent commands impossible.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+**Chapter 1: Command Purpose & Outlines**
+
+The REIN command is used to reinitialize the connection, resetting all parameters to their default settings and flushing any existing user, password, and account information. It does not terminate the control connection and can be executed at any time. Upon execution, the system sends a 220 greeting message, indicating it is ready to receive a new USER command and restart the dialogue.
+
+
+**Chapter 2: Valid Direct Preceding Commands/Methods**
+
+No specific commands are required to precede the REIN command. The context does not provide information on valid preceding commands.
+
+
+**Chapter 3: Valid Direct Subsequent Commands/Methods**
+
+- **Subsequent Command:** USER  
+  - **System State After REIN:** The system is in the default state, ready for user authentication.  
+  - **Effect of Subsequent Command:** The USER command re-establishes user credentials, changing the system state to an authenticated state.  
+
+- **Subsequent Command:** QUIT  
+  - **System State After REIN:** The system is in the default state, ready for user authentication.  
+  - **Effect of Subsequent Command:** The QUIT command terminates the control connection, changing the system state to a disconnected state.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+chapter 1:
+**Chapter 1: Command Purpose & Outlines**
+
+The PORT command is used to specify an alternate data port for data transfer, typically when the default port needs to be changed. It is part of the transfer parameters and is usually followed by a service command such as RETR or STOR. Executing the PORT command does not change the system state, and it can be used anytime. However, the server is responsible for closing the data connection after the transfer is complete, unless the connection is to remain open for subsequent transfers in Block or Compressed mode.
+
+---
+
+
+chapter 2:
+**Chapter 2: Valid Direct Preceding Commands/Methods**
+
+The following commands can directly precede the PORT command:
+
+1. **PASV**: The system must be in the default state. Executing PASV sets the server to listen on a specified port but does not change the system state beyond this parameter.
+
+2. **TYPE**: The system must be in the default state. Executing TYPE sets the data representation type but does not change the system state beyond this parameter.
+
+3. **STRU**: The system must be in the default state. Executing STRU sets the file structure but does not change the system state beyond this parameter.
+
+4. **MODE**: The system must be in the default state. Executing MODE sets the transfer mode but does not change the system state beyond this parameter.
+
+---
+
+
+chapter 3:
+**Chapter 3: Valid Direct Subsequent Commands/Methods**
+
+The following commands can directly follow the PORT command:
+
+1. **STOR**: The system must be in a state where the data connection is established on the specified port. Executing STOR initiates the file transfer, changing the system state to transfer the file. The server closes the connection after the transfer unless in Block or Compressed mode.
+
+2. **RETR**: The system must be in a state where the data connection is established on the specified port. Executing RETR initiates the file transfer, changing the system state to transfer the file. The server closes the connection after the transfer unless in Block or Compressed mode.
+
+3. **APPE**: The system must be in a state where the data connection is established on the specified port. Executing APPE initiates the file transfer, changing the system state to append to the file. The server closes the connection after the transfer unless in Block or Compressed mode.
+
+4. **LIST**: The system must be in a state where the data connection is established on the specified port. Executing LIST initiates the directory listing transfer, changing the system state to transfer the directory listing. The server closes the connection after the transfer unless in Block or Compressed mode.
+
+5. **NLST**: The system must be in a state where the data connection is established on the specified port. Executing NLST initiates the directory listing transfer in a concise format, changing the system state to transfer the directory listing. The server closes the connection after the transfer unless in Block or Compressed mode.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+**Chapter 1: Command Purpose & Outlines**
+
+The PASV command is used to request the server to listen on a non-default data port for incoming data connections, allowing the server to wait for a connection rather than initiating one. Executing PASV does not change the system state, and it can be used at any time, typically before initiating a data transfer command such as RETR, STOR, LIST, or NLST.
+
+
+
+**Chapter 2: Valid Direct Preceding Commands/Methods**
+
+- **PORT**: The system must be in a state where a data connection is being negotiated. Executing PASV after PORT allows the server to identify a non-default server-side data port without changing the system state.
+
+
+
+**Chapter 3: Valid Direct Subsequent Commands/Methods**
+
+- **RETR**: The system must be in a state where a data connection is being negotiated. Executing RETR after PASV initiates a file retrieval, changing the system state to data transfer mode.
+- **STOR**: The system must be in a state where a data connection is being negotiated. Executing STOR after PASV initiates a file storage, changing the system state to data transfer mode.
+- **LIST**: The system must be in a state where a data connection is being negotiated. Executing LIST after PASV initiates a directory listing, changing the system state to data transfer mode.
+- **NLST**: The system must be in a state where a data connection is being negotiated. Executing NLST after PASV initiates a directory listing in a compact form, changing the system state to data transfer mode. 
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+**Chapter 1: Command Purpose & Outlines**
+
+The TYPE command is used to specify the representation type and format for data transfer, such as ASCII, EBCDIC, or TYPE L 36 for paged files. The default value for TYPE is ASCII Non-print. Executing the TYPE command does not influence the system state, and it can be used at any time. It is part of the minimum implementation required for FTP servers.
+
+---
+
+
+**Chapter 2: Valid Direct Preceding Commands/Methods**
+
+- **MODE**: The system must be in the default state. Executing MODE before TYPE sets the transfer mode to Stream. The system state remains in the default state.
+- **STRU**: The system must be in the default state. Executing STRU before TYPE sets the file structure to File. The system state remains in the default state.
+
+---
+
+
+**Chapter 3: Valid Direct Subsequent Commands/Methods**
+
+- **RETR**: The system must be in the default state. Executing RETR after TYPE does not change the system state, and it remains in the default state.
+- **STOR**: The system must be in the default state. Executing STOR after TYPE does not change the system state, and it remains in the default state.
+- **NOOP**: The system must be in the default state. Executing NOOP after TYPE does not change the system state, and it remains in the default state.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+The STRU command is used to set the file structure, enabling the file to have an internal structure beyond the default continuous data byte sequence. It is part of the transfer parameters group and receives a 200 reply upon success. The STRU command is specifically used to handle paged files, such as those in TOPS-20 systems, by setting the structure to page-oriented (STRU P). This is particularly useful for efficiently transmitting files with page structures, including those with "holey" files where not all pages are contiguous. Executing STRU does not change the system state, and it can be used anytime to set this structure.
+
+
+- PORT: The system must be in a state ready to receive commands. Executing STRU after PORT does not change the system state.
+- PASV: The system must be in a state ready to receive commands. Executing STRU after PASV does not change the system state.
+- MODE: The system must be in a state ready to receive commands. Executing STRU after MODE does not change the system state.
+- TYPE: The system must be in a state ready to receive commands. Executing STRU after TYPE does not change the system state.
+- ABOR: The system must be in a state ready to receive commands. Executing STRU after ABOR does not change the system state.
+- ALLO: The system must be in a state ready to receive commands. Executing STRU after ALLO does not change the system state.
+- DELE: The system must be in a state ready to receive commands. Executing STRU after DELE does not change the system state.
+- CWD: The system must be in a state ready to receive commands. Executing STRU after CWD does not change the system state.
+- CDUP: The system must be in a state ready to receive commands. Executing STRU after CDUP does not change the system state.
+- SMNT: The system must be in a state ready to receive commands. Executing STRU after SMNT does not change the system state.
+- HELP: The system must be in a state ready to receive commands. Executing STRU after HELP does not change the system state.
+- NOOP: The system must be in a state ready to receive commands. Executing STRU after NOOP does not change the system state.
+- QUIT: The system must be in a state ready to receive commands. Executing STRU after QUIT does not change the system state.
+- SITE: The system must be in a state ready to receive commands. Executing STRU after SITE does not change the system state.
+- SYST: The system must be in a state ready to receive commands. Executing STRU after SYST does not change the system state.
+- STAT: The system must be in a state ready to receive commands. Executing STRU after STAT does not change the system state.
+- RMD: The system must be in a state ready to receive commands. Executing STRU after RMD does not change the system state.
+- MKD: The system must be in a state ready to receive commands. Executing STRU after MKD does not change the system state.
+- PWD: The system must be in a state ready to receive commands. Executing STRU after PWD does not change the system state.
+
+
+- ALLO: The system must be in a state ready to receive commands after STRU. Executing ALLO does not change the system state.
+- REST: The system must be in a state ready to receive commands after STRU. Executing REST does not change the system state.
+- STOR: The system must be in a state ready to receive commands after STRU. Executing STOR changes the system state to data transfer.
+- STOU: The system must be in a state ready to receive commands after STRU. Executing STOU changes the system state to data transfer.
+- RETR: The system must be in a state ready to receive commands after STRU. Executing RETR changes the system state to data transfer.
+- APPE: The system must be in a state ready to receive commands after STRU. Executing APPE changes the system state to data transfer.
+- LIST: The system must be in a state ready to receive commands after STRU. Executing LIST does not change the system state.
+- NLST: The system must be in a state ready to receive commands after STRU. Executing NLST does not change the system state.
+- REIN: The system must be in a state ready to receive commands after STRU. Executing REIN does not change the system state.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+The MODE command is used to set the data transfer mode, which can be Stream (S), Block (B), or Compressed (C). The default transfer mode is Stream. Executing the MODE command changes the system state by setting the transfer mode to the specified type. The MODE command can be used anytime as it is a parameter command that precedes the FTP service request. It is particularly useful for handling paged files, such as those in TOPS-20 systems, where the Stream mode (MODE S) is commonly utilized for efficient data transfer.
+
+
+- PORT: The system must be in a state where data transfer parameters can be set. Executing MODE after PORT does not change the system state; it only sets the transfer mode. The state remains in the data transfer parameter setup phase.
+- PASV: The system must be in a state where data transfer parameters can be set. Executing MODE after PASV does not change the system state; it only sets the transfer mode. The state remains in the data transfer parameter setup phase.
+- TYPE: The system must be in a state where data transfer parameters can be set. Executing MODE after TYPE does not change the system state; it only sets the transfer mode. The state remains in the data transfer parameter setup phase.
+- STRU: The system must be in a state where data transfer parameters can be set. Executing MODE after STRU does not change the system state; it only sets the transfer mode. The state remains in the data transfer parameter setup phase.
+- MODE: The system must be in a state where data transfer parameters can be set. Executing MODE after MODE does not change the system state; it only sets the transfer mode. The state remains in the data transfer parameter setup phase.
+
+
+- PORT: The system must be in a state where the transfer mode has been set. Executing PORT after MODE does not change the system state; it only specifies the data port. The state remains in the data transfer parameter setup phase.
+- PASV: The system must be in a state where the transfer mode has been set. Executing PASV after MODE does not change the system state; it only specifies the passive mode. The state remains in the data transfer parameter setup phase.
+- TYPE: The system must be in a state where the transfer mode has been set. Executing TYPE after MODE does not change the system state; it only specifies the representation type. The state remains in the data transfer parameter setup phase.
+- STRU: The system must be in a state where the transfer mode has been set. Executing STRU after MODE does not change the system state; it only specifies the file structure. The state remains in the data transfer parameter setup phase.
+- MODE: The system must be in a state where the transfer mode has been set. Executing MODE after MODE does not change the system state; it only sets the transfer mode again. The state remains in the data transfer parameter setup phase.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+chapter 1:
+**Chapter 1: Command Purpose & Outlines**
+
+The RETR command is used to retrieve a file from the server, and it does not alter the system state beyond the data transfer. The file's status and contents at the server site remain unaffected. It can be executed at any time, particularly after a restart procedure.
+
+---
+
+
+chapter 2:
+**Chapter 2: Valid Direct Preceding Commands/Methods**
+
+- **Restart Command (REST):**
+  - **State Required:** The system must be in a state where a file transfer was interrupted, and a restart is needed.
+  - **Effect of RETR:** Executing RETR after the REST command resumes the file transfer from the specified checkpoint. The system state transitions to the data transfer state, but the server's file status and contents remain unchanged.
+
+- **PORT Command:**
+  - **State Required:** The system must be in a state where the PORT command has been issued, specifying the data port for the transfer.
+  - **Effect of RETR:** Executing RETR after the PORT command initiates the file retrieval from the server. The system state transitions to the data transfer state, and the server begins sending the requested file to the specified port.
+
+- **USER Command:**
+  - **State Required:** The system must be in a state where the USER command has been successfully authenticated.
+  - **Effect of RETR:** Executing RETR after the USER command allows the authenticated user to retrieve a file. The system state transitions to the data transfer state.
+
+- **PASS Command:**
+  - **State Required:** The system must be in a state where the PASS command has been accepted, completing the user authentication.
+  - **Effect of RETR:** Executing RETR after the PASS command enables the authenticated user to retrieve a file. The system state transitions to the data transfer state.
+
+- **TYPE Command:**
+  - **State Required:** The system must be in a state where the TYPE command has set the data transfer type (e.g., ASCII or Image).
+  - **Effect of RETR:** Executing RETR after the TYPE command retrieves the file in the specified format. The system state transitions to the data transfer state.
+
+- **TYPE L 36 Command:**
+  - **State Required:** The system must be in a state where the TYPE command has been set to L 36, specifying the data transfer type for paged files.
+  - **Effect of RETR:** Executing RETR after the TYPE L 36 command retrieves the file in the specified paged format. The system state transitions to the data transfer state, and the file is sent with the appropriate page structure headers.
+
+---
+
+
+chapter 3:
+**Chapter 3: Valid Direct Subsequent Commands/Methods**
+
+- **TYPE Command:**
+  - **State Required:** The system must be in a state where the RETR command has completed the file transfer.
+  - **Effect of TYPE:** Executing TYPE after RETR changes the data transfer type for subsequent commands. The system state updates to the new transfer type.
+
+- **QUIT Command:**
+  - **State Required:** The system must be in a state where the RETR command has completed the file transfer.
+  - **Effect of QUIT:** Executing QUIT after RETR terminates the FTP session and closes all connections. The system state transitions to a disconnected state.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+The STOR command is used to upload a file from the client to the server. It is particularly useful for handling paged files, such as those in TOPS-20 systems, where each page is a contiguous set of 512 words of 36 bits each. The command supports efficient transmission of files with structures like page tables and attributes. Executing STOR changes the system state by adding a new file to the server or replacing the contents of an existing file if it already exists. It can be used anytime as long as the user is authenticated and in the correct mode, and it requires specific transfer parameters (TYPE L 36, STRU P, and MODE S) for paged files.
+
+
+- USER command: The system must be in a state where user authentication is required. Executing STOR after the USER command changes the system state to an authenticated state ready for file transfer.
+
+
+- QUIT command: The system must be in a state where the file transfer has been attempted but resulted in an error. Executing QUIT after STOR changes the system state to closing all connections.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+**Chapter 1: Command Purpose & Outlines**
+
+The STOU (Store Unique) command is used to store a file uniquely on the server, ensuring no duplicate files are created. Executing STOU influences the system state by writing a new file to the server and must be followed by a 250 Transfer Started response, which includes the name generated for the unique file. It can be used anytime after establishing a connection and logging in, typically following commands that set up the transfer parameters. STOU does not transition the system to data transfer mode but requires a 250 response to confirm the file's unique storage.
+
+
+**Chapter 2: Valid Direct Preceding Commands/Methods**
+
+- **TYPE**: Must be in a state ready for data transfer. STOU transitions to data transfer mode.
+- **MODE**: Must be in a state ready for data transfer. STOU transitions to data transfer mode.
+
+
+**Chapter 3: Valid Direct Subsequent Commands/Methods**
+
+- **RETR**: System is in data transfer mode. RETR retrieves a file, changing state to file transfer.
+- **STOR**: System is in data transfer mode. STOR stores a file, changing state to file transfer.
+- **APPE**: System is in data transfer mode. APPE appends to a file, changing state to file transfer.
+- **LIST**: System is in data transfer mode. LIST lists directory contents, changing state to file transfer.
+- **QUIT**: System is in command mode. QUIT ends the session, changing state to disconnected.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+The APPE (APPEND) command is used to append data to an existing file at the server site or create a new file if it does not exist. Executing the APPE command changes the system state by modifying the file. It can be used anytime, provided the server is in the correct state to accept the command and after handling any expected 100 series replies.
+
+
+- **REST**: The REST command can directly precede APPE. The system must be in a state where a file transfer needs to be restarted. Executing APPE after REST changes the system state by resuming the file transfer and appending data to the specified file.
+
+
+There are no explicitly defined commands that must directly follow the APPE command in the provided context. The APPE command can be followed by any valid FTP command, depending on the desired subsequent action.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+**Chapter 1: Command Purpose & Outlines**
+
+The ALLO command is used to allocate storage for a file to be transferred, reserving sufficient space on the server. Executing ALLO may change the system state by reserving storage, though this effect depends on the server's implementation. Some servers may treat ALLO as a no-operation (NOOP) if they do not require prior allocation. ALLO can be used anytime before initiating a file transfer, typically followed by STOR, APPE, or RETR commands.
+
+
+
+**Chapter 2: Valid Direct Preceding Commands/Methods**
+
+The ALLO command does not have specific required preceding commands beyond setting up transfer parameters. It is typically part of a sequence that includes commands like TYPE, MODE, or STRUCT, but these are not explicitly required by the context. Therefore, there are no specific commands that must directly precede ALLO.
+
+
+
+**Chapter 3: Valid Direct Subsequent Commands/Methods**
+
+- **STOR (STORE):** The system must be ready to receive data. Executing STOR after ALLO starts the file transfer and creates or overwrites the file on the server, changing the system state by storing the file.
+- **APPE (APPEND):** The system must be ready to receive data. Executing APPE after ALLO appends data to an existing file or creates a new file if it doesn't exist, changing the system state by modifying the file.
+- **RETR (RETRIEVE):** The system must be ready to send data. Executing RETR after ALLO retrieves a file from the server, changing the system state by sending the file to the client. 
+
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+**Chapter 1: Command Purpose & Outlines**
+
+The REST (RESTART) command is used to restart a file transfer from a specified checkpoint. It does not initiate the file transfer itself but sets a marker to resume from a previously specified point. Executing REST does not change the system state; it merely sets the restart marker. This command can be used anytime during a file transfer to resume from a previously set marker. The REST command may receive a 350 reply indicating it has been accepted, or error codes such as 500, 501, 502, 421, or 530 if it fails.
+
+---
+
+
+**Chapter 2: Valid Direct Preceding Commands/Methods**
+
+- **RETR (RETRIEVE):** The system must be in a state where a file transfer was previously initiated but not yet completed. Executing REST after RETR does not change the system state; it only sets the restart marker for resuming the transfer.
+- **STOR (STORE):** The system must be in a state where a file transfer was previously initiated but not yet completed. Executing REST after STOR does not change the system state; it only sets the restart marker for resuming the transfer.
+- **STOU (STORE UNIQUE):** The system must be in a state where a file transfer was previously initiated but not yet completed. Executing REST after STOU does not change the system state; it only sets the restart marker for resuming the transfer.
+- **APPE (APPEND):** The system must be in a state where a file transfer was previously initiated but not yet completed. Executing REST after APPE does not change the system state; it only sets the restart marker for resuming the transfer.
+
+---
+
+
+**Chapter 3: Valid Direct Subsequent Commands/Methods**
+
+- **RETR (RETRIEVE):** The system must be in a state where a restart marker has been set. Executing RETR after REST will resume the file transfer from the specified marker and will change the system state to "file transfer in progress."
+- **STOR (STORE):** The system must be in a state where a restart marker has been set. Executing STOR after REST will resume the file transfer from the specified marker and will change the system state to "file transfer in progress."
+- **APPE (APPEND):** The system must be in a state where a restart marker has been set. Executing APPE after REST will resume the file transfer from the specified marker and will change the system state to "file transfer in progress."
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+The RNFR (Rename From) command specifies the old pathname of the file to be renamed. Executing RNFR does influence the system state as it is part of the rename operation. It cannot be used anytime; it must be immediately followed by the RNTO (Rename To) command to complete the rename operation.
+
+
+No valid direct preceding commands/methods are specified in the context for RNFR.
+
+
+- **RNTO (Rename To)**: This command must directly follow RNFR to specify the new pathname. The system must be in the state where RNFR has been executed. Executing RNTO changes the system state by renaming the file from the old pathname to the new pathname.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+chapter 1:
+**Chapter 1: Command Purpose & Outlines**
+
+The RNTO (Rename To) command is used to specify the new pathname for a file that is being renamed. Executing RNTO does influence the system state by changing the name of the specified file. This command cannot be used at any time; it must immediately follow the RNFR (Rename From) command.
+
+---
+
+
+chapter 2:
+**Chapter 2: Valid Direct Preceding Commands/Methods**
+
+- **RNFR (Rename From)**
+  - **State Required:** The system must have executed the RNFR command and be ready to receive the new filename.
+  - **System State Change:** Yes, executing RNTO after RNFR changes the system state by renaming the file from the old pathname to the new one specified by RNTO.
+
+---
+
+
+chapter 3:
+**Chapter 3: Valid Direct Subsequent Commands/Methods**
+
+There are no specific commands that must directly follow the RNTO command. After completing the rename operation, the system is in a state where any valid FTP command can be issued.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+chapter 1:
+**Chapter 1: Command Purpose & Outlines**
+
+The ABOR command is used to abort a file transfer. Executing ABOR influences the system state by closing the data connection. It can be used anytime during an active file transfer, but if the previous command has already completed, ABOR will only close the data connection without further changes.
+
+---
+
+
+chapter 2:
+**Chapter 2: Valid Direct Preceding Commands/Methods**
+
+- **RETR**: The system must be in the data transfer state. After ABOR, the data connection closes, moving the system to the ready state.
+- **STOR**: The system must be in the data transfer state. After ABOR, the data connection closes, moving the system to the ready state.
+- **LIST**: The system must be in the data transfer state. After ABOR, the data connection closes, moving the system to the ready state.
+- **ALLO**: The system must be in the data transfer state. After ABOR, the data connection closes, moving the system to the ready state.
+- **REST**: The system must be in the data transfer state. After ABOR, the data connection closes, moving the system to the ready state.
+
+---
+
+
+chapter 3:
+**Chapter 3: Valid Direct Subsequent Commands/Methods**
+
+- **RETR**: The system must be in the ready state after ABOR. RETR initiates a new transfer, changing the state to data transfer.
+- **STOR**: The system must be in the ready state after ABOR. STOR initiates a new transfer, changing the state to data transfer.
+- **QUIT**: The system must be in the ready state after ABOR. QUIT ends the session, changing the state to closed.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+The DELE command is used to delete a file at the server site. Executing DELE does influence the system state by removing the specified file. The DELE command can be used anytime, as there are no specific restrictions on its usage mentioned in the context.
+
+
+There are no valid direct preceding commands/methods specified in the context for the DELE command.
+
+
+There are no valid direct subsequent commands/methods specified in the context for the DELE command.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+The RMD command is used to remove a directory. Executing RMD changes the system state by deleting the specified directory. It can be used anytime as long as the user has the appropriate permissions and the directory exists. The command can handle both absolute and relative pathnames, removing the directory as a directory or as a subdirectory of the current working directory.
+
+
+- CDUP: The system must be in a state where the user is in the parent directory of the directory to be removed. Executing RMD after CDUP changes the system state by removing the specified directory.
+- CWD: The system must be in a state where the user is in the directory to be removed. Executing RMD after CWD changes the system state by removing the specified directory.
+
+
+There are no valid subsequent commands specified for RMD in the provided context.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+The MKD command is used to create a new directory on the server. Executing the MKD command changes the system state by creating a new directory. The MKD command can be used anytime.
+
+
+- MKD can directly follow a connection without any required preceding commands. The system must be in the initial state. Executing MKD changes the system state to a new directory.
+
+
+- **PWD**: The system must be in the state where a directory has been created. Executing PWD does not change the system state.  - **CDUP**: The system must be in the state where a directory has been created. Executing CDUP changes the system state to the parent directory.  - **CWD**: The system must be in the state where a directory has been created. Executing CWD changes the system state to the newly created directory.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+The PWD command, which stands for "Print Working Directory," is used to display the current working directory of the user. It is a query command that does not alter the system state and can be executed at any time, as it does not depend on any specific system state beyond the current working directory. The successful execution of the PWD command returns a 257 reply code, which includes the absolute pathname of the current working directory.
+
+
+There are no valid direct preceding commands/methods specified for the PWD command in the provided context.
+
+
+There are no valid direct subsequent commands/methods specified for the PWD command in the provided context.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+**Chapter 1: Command Purpose & Outlines**
+
+The LIST command is used to retrieve a list of files in a directory or information about a specific file. It transfers data over the data connection in either ASCII or EBCDIC type, requiring the user to ensure the correct TYPE is set. Executing LIST does not influence the system state and can be used anytime.
+
+---
+
+
+**Chapter 2: Valid Direct Preceding Commands/Methods**
+
+- **RESTART (REST):** The system must be in a state where a file transfer was interrupted. After RESTART, the subsequent command must be either STOR or RETR to resume the transfer. Executing LIST after RESTART does not change the system state beyond what RESTART does.
+- **ALLOCATE (ALLO):** The system must be prepared to allocate storage for a new file. ALLO must be followed by STOR or APPE. Executing LIST after ALLO does not change the system state beyond what ALLO does.
+
+---
+
+
+**Chapter 3: Valid Direct Subsequent Commands/Methods**
+
+- **RETR:** The system must be in a state where a file transfer can be initiated. Executing RETR after LIST will retrieve the selected file, changing the system state by transferring the file data.
+- **STOR:** The system must be in a state where a file can be stored. Executing STOR after LIST will store a file on the server, changing the system state by uploading the file.
+- **NLST:** The system must be in a state where a name list of files can be retrieved. Executing NLST after LIST provides a simplified list of file names, maintaining the same system state.
+- **APPE:** The system must be in a state where a file can be appended. Executing APPE after LIST will append data to an existing file, changing the system state by modifying the file.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+The NLST (Name List) command is used to retrieve a directory listing from the server, providing a list of file names in the specified directory. Executing NLST does not alter the system state, as it is solely a retrieval command. However, the system may transition to a success, failure, or error state based on the server's response. It can be used at any time during an FTP session.
+
+
+- **CWD**: The system must be in a state where a specific directory has been selected. Executing NLST after CWD retrieves the directory listing of the specified directory. The system state remains unchanged as it only provides information.
+- **CDUP**: The system must be in a state where the parent directory has been selected. Executing NLST after CDUP retrieves the directory listing of the parent directory. The system state remains unchanged as it only provides information.
+- **PWD**: The system must be in a state where the current working directory has been identified. Executing NLST after PWD retrieves the directory listing of the current working directory. The system state remains unchanged as it only provides information.
+
+
+- **RETR**: The system must be in a state where a directory listing has been retrieved. Executing RETR after NLST initiates the retrieval of a file listed in the directory. The system state changes to data transfer mode.
+- **STOR**: The system must be in a state where a directory listing has been retrieved. Executing STOR after NLST initiates the storage of a file listed in the directory. The system state changes to data transfer mode.
+- **CWD**: The system must be in a state where a directory listing has been retrieved. Executing CWD after NLST changes the current working directory to one listed in the directory. The system state changes to the new directory.
+- **CDUP**: The system must be in a state where a directory listing has been retrieved. Executing CDUP after NLST changes the current working directory to the parent directory listed in the directory. The system state changes to the parent directory.
+- **QUIT**: The system must be in a state where a directory listing has been retrieved. Executing QUIT after NLST terminates the FTP session. The system state changes to disconnected.
+- **PWD**: The system must be in a state where a directory listing has been retrieved. Executing PWD after NLST confirms the current working directory. The system state remains unchanged as it only provides information.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+The SITE command is used to provide services specific to the server's system that are essential for file transfer but are not universal enough to be included as standard commands. Executing the SITE command does not influence the system state, and it can be used at any time.
+
+
+There are no valid direct preceding commands/methods specified in the context for the SITE command.
+
+
+There are no valid direct subsequent commands/methods specified in the context for the SITE command.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+The SYST command is used to determine the type of operating system at the server. Executing SYST does not influence the system state, and it can be used at any time.
+
+
+There are no valid direct preceding commands/methods specified for the SYST command.
+
+
+There are no valid direct subsequent commands/methods specified for the SYST command.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+The rule book for the STAT command remains unchanged as the provided context does not introduce new or conflicting information. All chapters are accurate based on the current understanding and the context from RFC 959.
+
+**Chapter 1: Command Purpose & Outlines**
+
+The STAT command is used to request a status response from the server. It can be sent during an ongoing file transfer or between transfers. The command does not influence the system state and can be used anytime, providing either the status of the current operation or general server information if no argument is given. The server will respond with a 211, 212, or 213 reply code.
+
+
+---
+
+**Chapter 2: Valid Direct Preceding Commands/Methods**
+
+- **RETR (RETRIEVE)**  
+  - **System State:** The system must be in a state where a file transfer is active.  
+  - **Effect on System State:** Executing STAT after RETR does not change the system state; it only provides the status of the ongoing transfer.  
+
+- **STOR (STORE)**  
+  - **System State:** The system must be in a state where a file transfer is active.  
+  - **Effect on System State:** Executing STAT after STOR does not change the system state; it only provides the status of the ongoing transfer.  
+
+- **RNFR (RENAME FROM)**  
+  - **System State:** The system must be ready to process a rename operation.  
+  - **Effect on System State:** Executing STAT after RNFR does not change the system state; it only provides the status of the rename operation.  
+
+- **RNTO (RENAME TO)**  
+  - **System State:** The system must be in the process of a rename operation.  
+  - **Effect on System State:** Executing STAT after RNTO does not change the system state; it only provides the status of the rename operation.  
+
+- **ABOR (ABORT)**  
+  - **System State:** The system must be processing an FTP service command.  
+  - **Effect on System State:** Executing STAT after ABOR does not change the system state; it only provides the status of the abort operation.  
+
+- **DELE (DELETE)**  
+  - **System State:** The system must be ready to delete a file.  
+  - **Effect on System State:** Executing STAT after DELE does not change the system state; it only provides the status of the delete operation.  
+
+- **RMD (REMOVE DIRECTORY)**  
+  - **System State:** The system must be ready to remove a directory.  
+  - **Effect on System State:** Executing STAT after RMD does not change the system state; it only provides the status of the directory removal operation.  
+
+- **MKD (MAKE DIRECTORY)**  
+  - **System State:** The system must be ready to create a directory.  
+  - **Effect on System State:** Executing STAT after MKD does not change the system state; it only provides the status of the directory creation operation.  
+
+- **PWD (PRINT WORKING DIRECTORY)**  
+  - **System State:** The system must be in a state where the working directory is set.  
+  - **Effect on System State:** Executing STAT after PWD does not change the system state; it only provides the status of the working directory.  
+
+- **LIST (LIST)**  
+  - **System State:** The system must be ready to list directory contents.  
+  - **Effect on System State:** Executing STAT after LIST does not change the system state; it only provides the status of the list operation.  
+
+- **NLST (NAME LIST)**  
+  - **System State:** The system must be ready to provide a directory listing.  
+  - **Effect on System State:** Executing STAT after NLST does not change the system state; it only provides the status of the name list operation.  
+
+- **SITE (SITE PARAMETERS)**  
+  - **System State:** The system must be ready to process site-specific parameters.  
+  - **Effect on System State:** Executing STAT after SITE does not change the system state; it only provides the status of the site parameters operation.  
+
+- **SYST (SYSTEM)**  
+  - **System State:** The system must be ready to provide system information.  
+  - **Effect on System State:** Executing STAT after SYST does not change the system state; it only provides the status of the system information request.  
+
+- **HELP (HELP)**  
+  - **System State:** The system must be ready to provide help information.  
+  - **Effect on System State:** Executing STAT after HELP does not change the system state; it only provides the status of the help information request.  
+
+- **NOOP (NOOP)**  
+  - **System State:** The system must be in an idle state.  
+  - **Effect on System State:** Executing STAT after NOOP does not change the system state; it only provides the status of the no-operation request.  
+
+
+---
+
+**Chapter 3: Valid Direct Subsequent Commands/Methods**
+
+- **RETR (RETRIEVE)**  
+  - **System State:** The system must be in a state where a file transfer can be initiated.  
+  - **Effect on System State:** Executing RETR after STAT changes the system state to initiate a file transfer.  
+
+- **STOR (STORE)**  
+  - **System State:** The system must be in a state where a file transfer can be initiated.  
+  - **Effect on System State:** Executing STOR after STAT changes the system state to initiate a file transfer.  
+
+- **RNFR (RENAME FROM)**  
+  - **System State:** The system must be in a state where a rename operation can be initiated.  
+  - **Effect on System State:** Executing RNFR after STAT changes the system state to start a rename operation.  
+
+- **RNTO (RENAME TO)**  
+  - **System State:** The system must be in the process of a rename operation.  
+  - **Effect on System State:** Executing RNTO after STAT completes the rename operation.  
+
+- **ABOR (ABORT)**  
+  - **System State:** The system must be processing an FTP service command.  
+  - **Effect on System State:** Executing ABOR after STAT aborts the current FTP service command.  
+
+- **DELE (DELETE)**  
+  - **System State:** The system must be ready to delete a file.  
+  - **Effect on System State:** Executing DELE after STAT changes the system state to delete the specified file.  
+
+- **RMD (REMOVE DIRECTORY)**  
+  - **System State:** The system must be ready to remove a directory.  
+  - **Effect on System State:** Executing RMD after STAT changes the system state to remove the specified directory.  
+
+- **MKD (MAKE DIRECTORY)**  
+  - **System State:** The system must be ready to create a directory.  
+  - **Effect on System State:** Executing MKD after STAT changes the system state to create the specified directory.  
+
+- **PWD (PRINT WORKING DIRECTORY)**  
+  - **System State:** The system must be in a state where the working directory is set.  
+  - **Effect on System State:** Executing PWD after STAT does not change the system state; it only provides the current working directory.  
+
+- **LIST (LIST)**  
+  - **System State:** The system must be ready to list directory contents.  
+  - **Effect on System State:** Executing LIST after STAT changes the system state to list the directory contents.  
+
+- **NLST (NAME LIST)**  
+  - **System State:** The system must be ready to provide a directory listing.  
+  - **Effect on System State:** Executing NLST after STAT changes the system state to provide the directory listing.  
+
+- **SITE (SITE PARAMETERS)**  
+  - **System State:** The system must be ready to process site-specific parameters.  
+  - **Effect on System State:** Executing SITE after STAT changes the system state to process the site parameters.  
+
+- **SYST (SYSTEM)**  
+  - **System State:** The system must be ready to provide system information.  
+  - **Effect on System State:** Executing SYST after STAT changes the system state to provide system information.  
+
+- **HELP (HELP)**  
+  - **System State:** The system must be ready to provide help information.  
+  - **Effect on System State:** Executing HELP after STAT changes the system state to provide help information.  
+
+- **NOOP (NOOP)**  
+  - **System State:** The system must be in an idle state.  
+  - **Effect on System State:** Executing NOOP after STAT does not change the system state; it only confirms the system's readiness.  
+
+- **QUIT (QUIT)**  
+  - **System State:** The system must be in a state where the user can disconnect.  
+  - **Effect on System State:** Executing QUIT after STAT changes the system state to close the connection. 
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+### Chapter 1: Command Purpose & Outlines
+
+The HELP command is designed to provide users with helpful information regarding the server's implementation status. It can display general help information or specific help for a given command if the optional string is provided. Executing the HELP command does not influence the system state, and it can be used anytime without affecting the system's operation.
+
+
+### Chapter 2: Valid Direct Preceding Commands/Methods
+
+- **Preceding Command:** USER
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after USER does not change the system state.
+
+- **Preceding Command:** PASS
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after PASS does not change the system state.
+
+- **Preceding Command:** ACCT
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after ACCT does not change the system state.
+
+- **Preceding Command:** CWD
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after CWD does not change the system state.
+
+- **Preceding Command:** CDUP
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after CDUP does not change the system state.
+
+- **Preceding Command:** SMNT
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after SMNT does not change the system state.
+
+- **Preceding Command:** QUIT
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after QUIT does not change the system state.
+
+- **Preceding Command:** REIN
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after REIN does not change the system state.
+
+- **Preceding Command:** PORT
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after PORT does not change the system state.
+
+- **Preceding Command:** PASV
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after PASV does not change the system state.
+
+- **Preceding Command:** TYPE
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after TYPE does not change the system state.
+
+- **Preceding Command:** STRU
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after STRU does not change the system state.
+
+- **Preceding Command:** MODE
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after MODE does not change the system state.
+
+- **Preceding Command:** RETR
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after RETR does not change the system state.
+
+- **Preceding Command:** STOR
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after STOR does not change the system state.
+
+- **Preceding Command:** STOU
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after STOU does not change the system state.
+
+- **Preceding Command:** APPE
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after APPE does not change the system state.
+
+- **Preceding Command:** ALLO
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after ALLO does not change the system state.
+
+- **Preceding Command:** REST
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after REST does not change the system state.
+
+- **Preceding Command:** RNFR
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after RNFR does not change the system state.
+
+- **Preceding Command:** RNTO
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after RNTO does not change the system state.
+
+- **Preceding Command:** ABOR
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after ABOR does not change the system state.
+
+- **Preceding Command:** DELE
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after DELE does not change the system state.
+
+- **Preceding Command:** RMD
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after RMD does not change the system state.
+
+- **Preceding Command:** MKD
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after MKD does not change the system state.
+
+- **Preceding Command:** PWD
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after PWD does not change the system state.
+
+- **Preceding Command:** LIST
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after LIST does not change the system state.
+
+- **Preceding Command:** NLST
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after NLST does not change the system state.
+
+- **Preceding Command:** SITE
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after SITE does not change the system state.
+
+- **Preceding Command:** SYST
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after SYST does not change the system state.
+
+- **Preceding Command:** STAT
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after STAT does not change the system state.
+
+- **Preceding Command:** NOOP
+  - **System State:** The system must be in a state ready to process the HELP command.
+  - **Impact on System State:** Executing HELP after NOOP does not change the system state.
+
+
+### Chapter 3: Valid Direct Subsequent Commands/Methods
+
+- **Subsequent Command:** USER
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The USER command will determine any changes to the system state.
+
+- **Subsequent Command:** PASS
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The PASS command will determine any changes to the system state.
+
+- **Subsequent Command:** ACCT
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The ACCT command will determine any changes to the system state.
+
+- **Subsequent Command:** CWD
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The CWD command will determine any changes to the system state.
+
+- **Subsequent Command:** CDUP
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The CDUP command will determine any changes to the system state.
+
+- **Subsequent Command:** SMNT
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The SMNT command will determine any changes to the system state.
+
+- **Subsequent Command:** QUIT
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The QUIT command will determine any changes to the system state.
+
+- **Subsequent Command:** REIN
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The REIN command will determine any changes to the system state.
+
+- **Subsequent Command:** PORT
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The PORT command will determine any changes to the system state.
+
+- **Subsequent Command:** PASV
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The PASV command will determine any changes to the system state.
+
+- **Subsequent Command:** TYPE
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The TYPE command will determine any changes to the system state.
+
+- **Subsequent Command:** STRU
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The STRU command will determine any changes to the system state.
+
+- **Subsequent Command:** MODE
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The MODE command will determine any changes to the system state.
+
+- **Subsequent Command:** RETR
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The RETR command will determine any changes to the system state.
+
+- **Subsequent Command:** STOR
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The STOR command will determine any changes to the system state.
+
+- **Subsequent Command:** STOU
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The STOU command will determine any changes to the system state.
+
+- **Subsequent Command:** APPE
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The APPE command will determine any changes to the system state.
+
+- **Subsequent Command:** ALLO
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The ALLO command will determine any changes to the system state.
+
+- **Subsequent Command:** REST
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The REST command will determine any changes to the system state.
+
+- **Subsequent Command:** RNFR
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The RNFR command will determine any changes to the system state.
+
+- **Subsequent Command:** RNTO
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The RNTO command will determine any changes to the system state.
+
+- **Subsequent Command:** ABOR
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The ABOR command will determine any changes to the system state.
+
+- **Subsequent Command:** DELE
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The DELE command will determine any changes to the system state.
+
+- **Subsequent Command:** RMD
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The RMD command will determine any changes to the system state.
+
+- **Subsequent Command:** MKD
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The MKD command will determine any changes to the system state.
+
+- **Subsequent Command:** PWD
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The PWD command will determine any changes to the system state.
+
+- **Subsequent Command:** LIST
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The LIST command will determine any changes to the system state.
+
+- **Subsequent Command:** NLST
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The NLST command will determine any changes to the system state.
+
+- **Subsequent Command:** SITE
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The SITE command will determine any changes to the system state.
+
+- **Subsequent Command:** SYST
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The SYST command will determine any changes to the system state.
+
+- **Subsequent Command:** STAT
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The STAT command will determine any changes to the system state.
+
+- **Subsequent Command:** NOOP
+  - **System State After HELP:** The system remains in the same state as before the HELP command was executed.
+  - **Impact on System State:** The NOOP command will determine any changes to the system state.
+-----------------------------------------------------------------------------------------------------------
+
+------------------
+
+The NOOP (NOOP) command is used to send a "200 OK" reply from the server without performing any action or altering any parameters. Executing NOOP does not influence the system state, and it can be used at any time during the FTP session.
+
+
+- **RETR**: The system must be in a state where a file transfer has been initiated. Executing NOOP after RETR does not change the system state.  
+- **STOR**: The system must be in a state where a file transfer has been initiated. Executing NOOP after STOR does not change the system state.  
+- **APPE**: The system must be in a state where a file transfer has been initiated. Executing NOOP after APPE does not change the system state.  
+- **ABOR**: The system must be in a state where an abort command has been processed. Executing NOOP after ABOR does not change the system state.  
+- **STAT**: The system must be in a state where status information has been requested. Executing NOOP after STAT does not change the system state.  
+
+
+- **RETR**: The system must be in a state where a file transfer can be initiated. Executing RETR after NOOP changes the system state to initiate a file transfer.  
+- **STOR**: The system must be in a state where a file transfer can be initiated. Executing STOR after NOOP changes the system state to initiate a file transfer.  
+- **APPE**: The system must be in a state where a file transfer can be initiated. Executing APPE after NOOP changes the system state to initiate a file transfer.  
+- **ABOR**: The system must be in a state where an abort command can be processed. Executing ABOR after NOOP changes the system state to abort the current operation.  
+- **STAT**: The system must be in a state where status information can be requested. Executing STAT after NOOP changes the system state to provide status information.
+-----------------------------------------------------------------------------------------------------------
+

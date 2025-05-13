@@ -1,0 +1,14 @@
+crewai
+crewai[tools]
+rich
+agentops
+chromadb 
+langchain
+langchain_experimental
+langchain_openai
+langchain_chroma
+fastapi
+uvicorn
+pydantic
+requests
+python-dotenv
