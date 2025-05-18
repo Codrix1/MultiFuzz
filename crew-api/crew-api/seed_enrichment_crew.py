@@ -3,7 +3,7 @@ from datetime import datetime
 from crewai import Agent, Task, Crew
 from drag_agent import retrieval_agent, retrieval_task
 from tools import SeedEnrichmentParsingTool
-from llm_utils import qwen_qwq, llama31, llama4, deepseek, llama3
+from llm_utils import llama33
 from prompts import seed_enrichment_prompt
 from dotenv import load_dotenv
 from rich import print
@@ -28,7 +28,7 @@ seed_enrichment_agent = Agent(
         "You should use the tool provided to parse and provide the final answer."
     ]),
     tools=[SeedEnrichmentParsingTool(result_as_answer=True)],
-    llm=llama31,
+    llm=llama33,
     verbose=True,
 )
 

@@ -3,7 +3,7 @@ from datetime import datetime
 from crewai import Agent, Task, Crew
 from drag_agent import retrieval_agent, retrieval_task
 from tools import GrammarExtractionFormattingTool
-from llm_utils import llama4, qwen_qwq, deepseek, llama31, llama3, gemma2, llama33
+from llm_utils import llama31, llama33
 from pydantic_models import RTSPGrammarTemplates
 from prompts import grammar_prompt
 from dotenv import load_dotenv
@@ -34,8 +34,8 @@ grammar_extraction_task = Task(
         "The rules are:",
         "1- You must use `<<VALUE>>` placeholders where appropriate",
         "2- Each header must end by: \\r\\n",
-        "A simple example for the RTSP protocol's DESCRIBE request, the object is expected to be like this:",
-        "{{'DESCRIBE': ['DESCRIBE <<VALUE>>\r\n','CSeq: <<VALUE>>\r\n','User-Agent: <<VALUE>>\r\n','Accept: <<VALUE>>\r\n']}}",
+        "A sample example for the of the output object is expected to be like this:",
+        '{{"templates": [{{"OPTIONS": ["OPTIONS <<VALUE>> RTSP/1.0\r\n", "CSeq: <<VALUE>>\r\n", "User-Agent: <<VALUE>>\r\n", "Accept: <<VALUE>>\r\n"]}},}}',
     ]),
     expected_output="A JSON object containing containing the request type as the key, and the value is a list of all the headers, according to the schema specified.",
     context=[rag_task],

@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 from typing import Type, Union
 from rich import print
 from pydantic_models import RTSPGrammarTemplates, EnrichedNetworkPacketSeeds, CoveragePlateauSurpassingNetworkPacket
+import requests
 from dotenv import load_dotenv
 
 class CustomRagToolInput(BaseModel):
@@ -71,8 +72,9 @@ class GrammarExtractionFormattingTool(BaseTool):
         i = 1
         final_output = "For the RTSP protocol, the client request templates are:\n\n"
 
-        for req_name, template in pydantic_output_object.templates.items():
-            final_output += f"""{i}. {req_name}: {str(template)}\n\n"""
+        for template in pydantic_output_object.templates:
+          for req_name, lines in template.root.items():
+            final_output += f"""{i}. {req_name}: {str(lines)}\n\n"""
             i += 1
 
         return final_output
@@ -140,6 +142,48 @@ class PacketParsingTool(BaseTool):
 
         return packet
 
+class CVEsRetrievalToolInput(BaseModel):
+    url: str = Field(..., description="The URL of the CVEs list")
+
+class CVEsRetrievalTool(BaseTool):
+    name: str = "CVEs Retrieval Tool"
+    description: str = "Fetches CVEs, and vulnerbilities for a specific protocol given a url for the CVE list."
+    args_schema: Type[BaseModel] = CVEsRetrievalToolInput
+
+    def _run(self, url: str) -> str:
+        """
+        This tool is useful for fetching CVEs, and vulnerbilities for a specific protocol given a url for the CVE list.
+        The tool returns a structured JSON object containing the CVE ID, severity, and description.
+        """
+        response = requests.get(url)
+        cves_json = response.json()
+
+        parsed_output = []
+
+        for vuln in cves_json["vulnerabilities"]:
+            cve = vuln["cve"]
+            cve_id = cve.get("id")
+
+            severity = ""
+            if "metrics" in cve and "cvssMetricV2" in cve["metrics"]:
+                severity = cve["metrics"]["cvssMetricV2"][0].get("cvssData", {}).get("baseSeverity", "")
+
+            description = next(
+                (desc["value"] for desc in cve.get("descriptions", []) if desc["lang"] == "en"),
+                ""
+            )
+
+            parsed_output.append({
+                "cve_id": cve_id,
+                "severity": severity,
+                "description": description,
+            })
+
+        final_json_list = str(json.dumps(parsed_output, indent=2))
+
+        time.sleep(10)
+
+        return final_json_list
 
 if __name__ == "__main__":
     load_dotenv()

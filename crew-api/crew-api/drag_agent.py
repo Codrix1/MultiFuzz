@@ -3,7 +3,7 @@ from datetime import datetime
 from crewai import Agent, Task, Crew
 from tools import CustomRagTool
 from prompts import coverage_plateau_prompt
-from llm_utils import llama33
+from llm_utils import llama4
 from dotenv import load_dotenv
 from rich import print
 
@@ -23,7 +23,7 @@ retrieval_agent = Agent(
     max_rpm=2,
     max_retry_limit=2,
     verbose=True,
-    llm=llama33,
+    llm=llama4,
 )
 
 retrieval_task = Task(

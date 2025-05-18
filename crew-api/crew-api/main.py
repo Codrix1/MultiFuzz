@@ -28,10 +28,11 @@ async def lifespan(app: FastAPI):
     seeds_crew = assemble_seed_enrichment_crew()
     coverage_crew = assemble_coverage_plateau_crew()
     general_fsm_crew = assemble_general_fsm_crew()
+    
     agentops.init(api_key=os.getenv("AGENTOPS_API_KEY"), skip_auto_end_session=True)
     
     log_file = open("crew_api.log", "a+")
-    log_file.write(f"DRAGFuzz API started at {datetime.now(pytz.timezone('Africa/Cairo')).strftime('%d-%I-%M-%S')}\n")
+    log_file.write(f"MultiFuzz-API started at {datetime.now(pytz.timezone('Africa/Cairo')).strftime('%d-%I-%M-%S')}\n")
     
     # Yield control to the application
     yield
@@ -39,7 +40,7 @@ async def lifespan(app: FastAPI):
     print("Lifespan: Cleaning up resources...")
     grammar_crew, seeds_crew, coverage_crew, general_fsm_crew = None, None, None, None
 
-app = FastAPI(title="DRAGFuzz-API", lifespan=lifespan)
+app = FastAPI(title="MultiFuzz-API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -67,6 +68,7 @@ def process_prompt(prompt: str):
                 "question": prompt
             }
         )
+        
     elif prompt_type == Techinque.seed_enrichment.value:
         print("Prompt is of type: Seed Enrichment, chatting with the seed enrichment crew...")
         response = seeds_crew.kickoff(
@@ -75,14 +77,22 @@ def process_prompt(prompt: str):
                 "question": prompt
             }
         )
+        
     elif prompt_type == Techinque.coverage_plateau.value:
         print("Prompt is of type: Coverage Plateau, chatting with the coverage plateau crew...")
+        
+        url = "https://services.nvd.nist.gov/rest/json/cves/2.0?keywordSearch=Live555"
+        server = "Live555"
+
         response = coverage_crew.kickoff(
-            inputs={
+            inputs = {
                 "protocol": "RTSP",
-                "question": prompt
+                "server": server,
+                "question": prompt,
+                "url": url
             }
         )
+        
     else:
         print("Prompt is of type: General FSM, chatting with the general FSM crew...")
         response = general_fsm_crew.kickoff(
@@ -112,10 +122,10 @@ async def chat_with_crew(request: FuzzerRequestModel):
     prompt = request.question
     print(f"Prompt in the coming request: {prompt}")
     response = process_prompt(prompt)
-    log_interaction(f"-------------------------------\n Prompt: {prompt} \n\n Response: {response} \n ----------------------------------- \n\n")      
+    log_interaction(f"------------------------------- \n Prompt: {prompt} \n\n Response: {response} \n ----------------------------------- \n\n")      
 
     print("*"*30)
-    print(f"DRAGFuzz Response: \n\n {response}")
+    print(f"MultiFuzz Response: \n\n {response}")
     print("*"*30)
     
     return {"response": response}
