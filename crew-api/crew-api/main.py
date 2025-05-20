@@ -1,9 +1,10 @@
 import uvicorn
 import time, pytz, os
+import ujson
 import agentops
 from rich import print
 from datetime import datetime
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
@@ -11,7 +12,6 @@ from grammar_extraction_crew import assemble_grammar_extraction_crew
 from seed_enrichment_crew import assemble_seed_enrichment_crew
 from cov_plateau_crew import assemble_coverage_plateau_crew
 from general_crew import assemble_general_fsm_crew
-from fastapi_models import *
 from prompt_utils import *
 
 @asynccontextmanager
@@ -29,6 +29,7 @@ async def lifespan(app: FastAPI):
     coverage_crew = assemble_coverage_plateau_crew()
     general_fsm_crew = assemble_general_fsm_crew()
     
+    os.makedirs("logs", exist_ok=True)
     agentops.init(api_key=os.getenv("AGENTOPS_API_KEY"), skip_auto_end_session=True)
     
     log_file = open("crew_api.log", "a+")
@@ -115,18 +116,24 @@ async def health_check():
     return {"status": "ok"}
 
 
-@app.post("/chat-llm", response_model=FuzzerResponseModel)
-async def chat_with_crew(request: FuzzerRequestModel):
+@app.post("/chat-llm")
+async def chat_with_crew(request: Request):
     print("Chatting with some crew...")
-    
-    prompt = request.question
-    print(f"Prompt in the coming request: {prompt}")
-    response = process_prompt(prompt)
-    log_interaction(f"------------------------------- \n Prompt: {prompt} \n\n Response: {response} \n ----------------------------------- \n\n")      
 
-    print("*"*30)
-    print(f"MultiFuzz Response: \n\n {response}")
-    print("*"*30)
+    raw_body = await request.body()
+    try:
+        prompt = ujson.loads(raw_body.decode('utf-8'))['question']
+        print(f"Prompt in the coming request: {prompt}")
+
+        response = process_prompt(prompt)
+        log_interaction(f"------------------------------- \n Prompt: {prompt} \n\n Response: {response} \n ----------------------------------- \n\n")      
+        print("*"*30)
+        print(f"MultiFuzz Response: \n\n {response}")
+        print("*"*30)
+
+    except ValueError as ve:
+        print(f"Value Error when decoding JSON: {ve}")
+        raise HTTPException(status_code=400, detail="Invalid JSON")
     
     return {"response": response}
 
