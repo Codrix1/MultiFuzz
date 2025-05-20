@@ -151,6 +151,7 @@ char *chat_with_llm(char *prompt, char *model, int tries, float temperature)
     }
 
     curl_global_cleanup();
+    log_prompt(answer, "Answer");
     return answer;
 }
 
@@ -189,6 +190,7 @@ char *construct_prompt_stall(char *protocol_name, char *examples, char *history)
 }
 
 char *construct_prompt_for_templates(char *protocol_name, char **final_msg) {
+    log_prompt(protocol_name, "protocol_name");
     char *msg = NULL;
     char *grammar_prompt = "For the %s protocol, you are asked to provide all the client request/method templates, including optional headers. "
                            "Obtain necessary information about %s client requests/methods used in a client-server interaction, and also obtain information about header fields.";
@@ -383,7 +385,8 @@ char *construct_prompt_for_requests_to_states(const char *protocol_name,
 
 void extract_message_grammars(char *answers, klist_t(gram) * grammar_list)
 {
-
+    
+    log_prompt(answers, "list");
     char *ptr = answers;
     int len = strlen(answers);
 
@@ -400,7 +403,7 @@ void extract_message_grammars(char *answers, klist_t(gram) * grammar_list)
         strncpy(temp, start, count);
         temp[count] = '\0';
         ptr = end + 1;
-
+        log_prompt(temp, "temp");
         // conver temp to json object and save it to the list
         json_object *jobj = json_tokener_parse(temp);
         *kl_pushp(gram, grammar_list) = jobj;
