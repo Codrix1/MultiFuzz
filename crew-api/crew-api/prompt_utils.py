@@ -11,7 +11,7 @@ def determine_prompt_type(prompt: str):
       Determines the type of the prompt by identifying specific keywords or structures in the prompt.
     """
     
-    if "client request/method templates" in prompt:
+    if "client request/method templates" in prompt or "the remaining client request/method templates" in prompt:
         return Techinque.grammar_extraction.value
     elif "sequence of client requests" in prompt and "add them" in prompt:
         return Techinque.seed_enrichment.value
